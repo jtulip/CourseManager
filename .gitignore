@@ -1,6 +1,7 @@
 .classpath
 .project
 /CourseManager/
+/derbyDemo/
 derby.log
 
 *.class
