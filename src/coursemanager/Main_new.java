@@ -8,7 +8,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Main {
+import org.apache.ibatis.jdbc.ScriptRunner;
+
+public class Main_new {
 
     private static String dbName = "CourseManager";
     private static String connectionURL = "jdbc:derby:" + dbName + ";";
@@ -18,38 +20,30 @@ public class Main {
             + " LAST_NAME VARCHAR(32) NOT NULL) ";
 
     public static void main(String[] args) {
-    	
-    	Object lock = new Object();
-    	DerbyTestGUI window = new DerbyTestGUI();
-        window.setVisible(true);
 
         try (Connection conn = getValidDBConnection();) {
 
-            // start the GUI
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    try {                       
-                    	window.addWindowListener(new WindowAdapter () {    
-                    		@Override
-                    		public void windowClosing(WindowEvent arg0) {
-                    			synchronized(lock) {
-                    				System.out.println("Detected window closing");
-                    				window.setVisible(false);
-                    				lock.notify();
-                    			}
-                    		}
-                    	});
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            
-            //wait for the GUI to close
+            // start the GUI and then wait for it to close
+        	Object lock = new Object();
+        	
+        	DerbyTestGUI gui = new DerbyTestGUI();
+        	gui.setVisible(true);
+        	gui.addWindowListener(new WindowAdapter () {    
+        		@Override
+        		public void windowClosing(WindowEvent arg0) {
+        			synchronized(lock) {
+        				System.out.println("Detected window closing");
+        				gui.setVisible(false);
+        				lock.notify();
+        			}
+        		}
+        	});
+        
+
         	Thread thread = new Thread() {
         		public void run() {
         			synchronized(lock) {
-        				while (window.isVisible()) {
+        				while (gui.isVisible()) {
         					try {
         						lock.wait();
         					}
@@ -61,10 +55,9 @@ public class Main {
         	
         	thread.start();
         	thread.join();
-            
-            //window.dispose();
-            
-            // shut down derby (only for embedded mode)
+        	
+        	// shut down derby (only for embedded mode)
+    		System.out.println("Shutting down derby");
             try {
                 DriverManager.getConnection("jdbc:derby:;shutdown=true");
             } catch (SQLException sqle) {
@@ -120,14 +113,16 @@ public class Main {
             s.execute("UPDATE STUDENT " + "SET FIRST_NAME= 'FRED', " + "LAST_NAME = 'NURKE' " + "WHERE 1=3");
         } catch (SQLException sqle) {
             String err = sqle.getSQLState();
-            if (err.equals("42X05")) { // table does not exist
+            if (err.equals("42X05")) { 
+            	// table does not exist
                 return false;
-            } else if (err.equals("42X14") || err.equals("442821")) { // incorrect
-                                                                      // table
-                                                                      // definition
+            } 
+            else if (err.equals("42X14") || err.equals("442821")) { 
+            	// incorrect table definition
                 System.err.println("chk4db: Incorrect table definition");
                 throw sqle;
-            } else {
+            } 
+            else {
                 System.err.println("chk4db: Unhandled SQLException");
                 throw sqle;
             }

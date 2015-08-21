@@ -3,6 +3,7 @@ package coursemanager;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +16,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.ActionEvent;
 
 public class DerbyTestGUI {
@@ -43,41 +45,24 @@ public class DerbyTestGUI {
      */
     public DerbyTestGUI() {
         initialize();
-
-        JPanel mainPanel = new HomePanel();
-        JPanel addStudentPanel = new AddStudentPanel();
-        JPanel editStudentPanel = new EditStudentPanel();
-        JPanel deleteStudentPanel = new DeleteStudentPanel();
-        
-        JPanel addSubjectPanel = new AddSubjectPanel();
-        JPanel editSubjectPanel = new EditSubjectPanel();
-        JPanel deleteSubjectPanel = new DeleteSubjectPanel();
-        
-        JPanel addLecturerPanel = new AddLecturerPanel();
-        JPanel editLecturerPanel = new EditLecturerPanel();
-        JPanel deleteLecturerPanel = new DeleteLecturerPanel();
-       
-        cards = new JPanel(new CardLayout());
-        cards.add(mainPanel, "Home");
-        cards.add(addStudentPanel, "Add Student");
-        cards.add(editStudentPanel, "Edit Student");
-        cards.add(deleteStudentPanel, "Delete Student");
-
-        cards.add(addSubjectPanel, "Add Subject");
-        cards.add(editSubjectPanel, "Edit Subject");
-        cards.add(deleteSubjectPanel, "Delete Subject");
-
-        cards.add(addLecturerPanel, "Add Lecturer");
-        cards.add(editLecturerPanel, "Edit Lecturer");
-        cards.add(deleteLecturerPanel, "Delete Lecturer");
-
-        Container pane = frame.getContentPane();
-        pane.add(cards, null);
+        //this.visible = true;
     }
 
-    public void setVisible(boolean state) {
-        this.frame.setVisible(state);
-    }
+	public void setVisible(boolean state) {
+		this.frame.setVisible(state);
+	}
+	
+	public boolean isVisible() {
+		return this.frame.isVisible();
+	}
+
+	public void addWindowListener(WindowAdapter adapter) {
+		this.frame.addWindowListener(adapter);
+	}
+	
+	public void dispose() {
+		this.frame.dispose();
+	}
 
     /**
      * Initialize the contents of the frame.
@@ -85,7 +70,7 @@ public class DerbyTestGUI {
     private void initialize() {
         frame = new JFrame();
         frame.setBounds(100, 100, 750, 615);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
@@ -98,12 +83,10 @@ public class DerbyTestGUI {
         mntmExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 System.out.println("GUI exiting");
-                frame.setVisible(false);
-                frame.dispose();
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
         });
         mnHome.add(mntmExit);
-
         
         // create Student CRUD menu items
         JMenu mnStudent = new JMenu("Students");
@@ -136,6 +119,37 @@ public class DerbyTestGUI {
         menuBar.add(mnMarking);
 
         addMenuItem(mnMarking, "Edit Student Marks");
+
+        JPanel mainPanel = new HomePanel();
+        JPanel addStudentPanel = new AddStudentPanel();
+        JPanel editStudentPanel = new EditStudentPanel();
+        JPanel deleteStudentPanel = new DeleteStudentPanel();
+        
+        JPanel addSubjectPanel = new AddSubjectPanel();
+        JPanel editSubjectPanel = new EditSubjectPanel();
+        JPanel deleteSubjectPanel = new DeleteSubjectPanel();
+        
+        JPanel addLecturerPanel = new AddLecturerPanel();
+        JPanel editLecturerPanel = new EditLecturerPanel();
+        JPanel deleteLecturerPanel = new DeleteLecturerPanel();
+       
+        cards = new JPanel(new CardLayout());
+        cards.add(mainPanel, "Home");
+        cards.add(addStudentPanel, "Add Student");
+        cards.add(editStudentPanel, "Edit Student");
+        cards.add(deleteStudentPanel, "Delete Student");
+
+        cards.add(addSubjectPanel, "Add Subject");
+        cards.add(editSubjectPanel, "Edit Subject");
+        cards.add(deleteSubjectPanel, "Delete Subject");
+
+        cards.add(addLecturerPanel, "Add Lecturer");
+        cards.add(editLecturerPanel, "Edit Lecturer");
+        cards.add(deleteLecturerPanel, "Delete Lecturer");
+
+        Container pane = frame.getContentPane();
+        pane.add(cards, null);
+
     }
 
     private void addMenuItem(JMenu menu, final String identifier) {
