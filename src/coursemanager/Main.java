@@ -1,4 +1,4 @@
-package derbytest;
+package coursemanager;
 
 import java.awt.EventQueue;
 import java.sql.Connection;
