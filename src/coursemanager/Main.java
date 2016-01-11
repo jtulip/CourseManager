@@ -62,7 +62,7 @@ public class Main {
         	thread.start();
         	thread.join();
             
-            //window.dispose();
+            window.dispose();
             
             // shut down derby (only for embedded mode)
             try {
